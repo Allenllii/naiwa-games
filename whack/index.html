@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fff9f1">
+<meta name="description" content="打奶蛙：国民小游戏「打地鼠」的奶蛙版。16 个洞、60 秒，锤爆冒头的奶蛙，别打天使！">
+<title>打奶蛙 · 奶蛙小游戏</title>
+<link rel="icon" type="image/webp" href="../assets/nai/nai01-blob.webp">
+<link rel="stylesheet" href="style.css?v=20261001b">
+</head>
+<body>
+<div class="page">
+  <main class="app">
+
+    <!-- ============ 舞台 ============ -->
+    <section class="stage-wrap" id="stageWrap">
+      <div class="stage" id="stage">
+        <canvas id="cv" role="img" aria-label="打奶蛙游戏舞台：4×4 共 16 个洞"></canvas>
+
+        <!-- 顶部：倒计时数字 + 进度条 + 连击小牌 -->
+        <div class="hud" id="hud" aria-hidden="true">
+          <span class="hud-time" id="hudTime">60</span>
+          <div class="timebar"><i id="timeFill"></i></div>
+          <div class="combo-chip" id="comboChip"><b id="ccNum">0</b><span>连击</span><em id="ccMult">×2</em></div>
+          <span class="hud-plus" id="hudPlus">+2秒</span>
+        </div>
+
+        <!-- 开始前 -->
+        <div class="overlay" id="ovStart">
+          <div class="ov-card">
+            <div class="ov-title">打奶蛙</div>
+            <p class="ov-sub">60 秒内，把冒头的奶蛙统统锤趴下！</p>
+            <button class="btn primary big pulse" id="btnStart" type="button">点击开始</button>
+            <ul class="legend mini">
+              <li><span class="thumb t-normal"><img src="../assets/nai/nai04-rooster.webp" alt=""></span><div><b>普通奶蛙</b><small>点中 +1</small></div></li>
+              <li><span class="thumb t-sumo"><img src="../assets/nai/nai08-sumo.webp" alt=""></span><div><b>大块头</b><small>打 2 下 · +3</small></div></li>
+              <li><span class="thumb t-god"><span class="gimg"></span></span><div><b>金色神奶蛙</b><small>+5 · 时间 +2 秒</small></div></li>
+              <li><span class="thumb t-angel"><img src="../assets/nai/nai09-angel.webp" alt=""></span><div><b>天使 别打！</b><small>-3 分 · 连击清零</small></div></li>
+            </ul>
+            <p class="ov-hint">连续命中涨倍率：每 5 连击 +1 倍，最高 ×4</p>
+          </div>
+        </div>
+
+        <!-- 暂停（切走标签页时） -->
+        <div class="overlay hidden" id="ovPause">
+          <div class="ov-card">
+            <div class="ov-title small">已暂停</div>
+            <p class="ov-sub">奶蛙们在洞里等你回来</p>
+            <button class="btn primary big" id="btnResume" type="button">继续游戏</button>
+          </div>
+        </div>
+
+        <!-- 结束 -->
+        <div class="overlay hidden" id="ovOver">
+          <div class="confetti" id="confetti" aria-hidden="true"></div>
+          <div class="ov-card">
+            <div class="ov-title">时间到！</div>
+            <div class="ov-scores">
+              <div class="ov-box"><span class="lbl">本局得分</span><b id="ovScore">0</b></div>
+              <div class="ov-box"><span class="lbl">最高分</span><b class="gold" id="ovBest">0</b></div>
+            </div>
+            <div class="ov-new" id="ovNew">新纪录！</div>
+            <p class="ov-rank" id="ovRank"></p>
+            <p class="ov-stats" id="ovStats"></p>
+            <button class="btn primary big" id="btnAgain" type="button">再来一局</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 侧栏 ============ -->
+    <aside class="panel" id="panel">
+      <header class="brand">
+        <h1>打奶蛙</h1>
+        <p class="sub">60 秒内锤爆冒头的奶蛙，别打天使！</p>
+      </header>
+
+      <div class="stats">
+        <div class="stat"><span class="k">分数</span><b class="v" id="vScore">0</b></div>
+        <div class="stat"><span class="k">最高分</span><b class="v best" id="vBest">0</b></div>
+        <div class="stat"><span class="k">剩余时间</span><b class="v" id="vTime">60</b></div>
+        <div class="stat"><span class="k">连击</span><b class="v" id="vCombo">0</b><em class="mult" id="vMult">×1</em></div>
+      </div>
+
+      <ul class="legend">
+        <li><span class="thumb t-normal"><img src="../assets/nai/nai03-mouse.webp" alt=""></span><div><b>普通奶蛙</b><small>点中 +1</small></div></li>
+        <li><span class="thumb t-sumo"><img src="../assets/nai/nai08-sumo.webp" alt=""></span><div><b>大块头</b><small>要打 2 下 · +3</small></div></li>
+        <li><span class="thumb t-god"><span class="gimg"></span></span><div><b>金色神奶蛙</b><small>稀有 · +5 · 时间 +2 秒</small></div></li>
+        <li><span class="thumb t-angel"><img src="../assets/nai/nai09-angel.webp" alt=""></span><div><b>天使 · 别打！</b><small>-3 分 · 连击清零</small></div></li>
+      </ul>
+
+      <div class="btns">
+        <button class="btn" id="btnSound" type="button" aria-pressed="false"><span class="ico">🔊</span> <span class="txt">音效开</span></button>
+        <button class="btn primary" id="btnRestart" type="button"><span class="ico">↻</span> <span class="txt">重开</span></button>
+        <a class="btn" id="btnHome" href="../index.html"><span class="ico">🏠</span> <span class="txt">合集</span></a>
+      </div>
+
+      <p class="tip" id="tip">每 5 连击倍率 +1（最高 ×4），打空或误伤天使连击清零。<br>键盘：<kbd>6</kbd><kbd>7</kbd><kbd>8</kbd><kbd>9</kbd> / <kbd>Y</kbd><kbd>U</kbd><kbd>I</kbd><kbd>O</kbd> / <kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> / <kbd>N</kbd><kbd>M</kbd><kbd>,</kbd><kbd>.</kbd> 对应 16 个洞，<kbd>R</kbd> 重开。</p>
+      <p class="foot2">奶蛙是网络梗 · 本项目仅供学习娱乐</p>
+    </aside>
+
+  </main>
+  <footer class="foot">奶蛙是网络梗 · 本项目仅供学习娱乐</footer>
+</div>
+
+<script src="../common/sfx.js"></script>
+<script src="logic.js?v=20261001b"></script>
+<script src="game.js?v=20261001b"></script>
+</body>
+</html>
