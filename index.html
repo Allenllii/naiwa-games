@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>奶蛙小游戏合集</title>
+<meta name="description" content="大家都玩过的国民小游戏，全部换成奶蛙皮肤：打奶蛙、奶了个奶、奶蛙消消乐、奶蛙跳一跳。">
+<meta name="theme-color" content="#fff9f1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="奶蛙小游戏合集">
+<meta property="og:description" content="大家都玩过的国民小游戏，全部换成奶蛙皮肤。点开就能玩，手机和电脑都行。">
+<link rel="icon" href="favicon.ico">
+<style>
+  :root {
+    --ink: #4a3325;
+    --ink-soft: #7a6556;
+    --cream: #fff7ec;
+    --brand: #ff6b6b;
+    --brand-dark: #e14b4b;
+    --card: rgba(255, 255, 255, .74);
+    --shadow: 0 18px 50px rgba(126, 84, 44, .18);
+    --ease-out: cubic-bezier(.22, 1, .36, 1);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    color: var(--ink);
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(1200px 700px at 8% -12%, #ffe9bd 0%, transparent 60%),
+      radial-gradient(900px 600px at 104% -6%, #d5f0ff 0%, transparent 55%),
+      radial-gradient(1000px 780px at 50% 118%, #ffdbe6 0%, transparent 62%),
+      #fff9f1;
+    background-attachment: fixed;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  /* ---------- 头部 ---------- */
+  .hero { display: flex; align-items: center; gap: 20px; padding: 44px 4px 22px; }
+  .hero-mascot { position: relative; flex: 0 0 auto; width: 112px; height: 112px; }
+  .hero-mascot img { width: 100%; height: 100%; object-fit: contain; transform-origin: 50% 85%; animation: giggle .9s ease-in-out infinite; }
+  .bubble {
+    position: absolute; left: -2px; top: -30px; white-space: nowrap;
+    padding: 5px 11px; border-radius: 14px 14px 14px 4px;
+    background: #fff; color: var(--brand-dark); font-size: 13px; font-weight: 700;
+    box-shadow: 0 6px 16px rgba(126, 84, 44, .16);
+  }
+  h1 {
+    margin: 0; font-size: clamp(28px, 6vw, 40px); letter-spacing: .04em; line-height: 1.15;
+    background: linear-gradient(100deg, #ff7a59, #ff4d6d 55%, #b13bff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+
+  /* ---------- 游戏卡片 ---------- */
+  .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  .card {
+    display: flex; flex-direction: column; overflow: hidden; text-decoration: none; color: inherit;
+    border-radius: 24px; border: 1px solid rgba(255, 255, 255, .8);
+    background: var(--card); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    box-shadow: var(--shadow);
+    transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out);
+  }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 26px 60px rgba(126, 84, 44, .26); }
+  .card:active { transform: translateY(0) scale(.985); transition-duration: .1s; }
+  .card:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+
+  .art { position: relative; height: 184px; overflow: hidden; }
+  .meta { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px 18px; flex: 1; }
+  .meta h2 { margin: 0; font-size: 22px; letter-spacing: .03em; }
+  .orig {
+    align-self: flex-start; margin: 0; padding: 2px 10px; border-radius: 99px;
+    font-size: 12px; font-weight: 600; color: var(--brand-dark); background: rgba(255, 107, 107, .12);
+  }
+  .meta p.desc { margin: 2px 0 0; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+  .go {
+    align-self: flex-end; margin-top: auto; padding: 8px 16px; border-radius: 14px;
+    font-size: 13.5px; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, #ff8a5b, var(--brand) 55%, var(--brand-dark));
+    box-shadow: 0 8px 18px rgba(225, 75, 75, .28);
+  }
+  .meta .go { margin-top: 10px; }
+
+  /* ---------- 打奶蛙：洞里冒头的小老鼠 ---------- */
+  .art-whack { background: linear-gradient(160deg, #ffe9bd, #ffd0a6); }
+  .art-whack .hole {
+    position: absolute; left: 50%; bottom: 24px; width: 150px; height: 44px; transform: translateX(-50%);
+    border-radius: 50%; background: radial-gradient(ellipse at 50% 38%, #5a3a28, #3d2519 78%);
+    box-shadow: inset 0 6px 9px rgba(0, 0, 0, .4), 0 3px 0 rgba(255, 255, 255, .4);
+  }
+  .art-whack .mole {
+    position: absolute; left: 50%; bottom: 42px; width: 104px; margin-left: -52px;
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  .art-whack .rim {
+    position: absolute; left: 50%; bottom: 20px; width: 150px; height: 26px; transform: translateX(-50%);
+    border-radius: 0 0 75px 75px / 0 0 26px 26px; background: linear-gradient(#8a5a3b, #6b4430);
+  }
+  .art-whack .hammer {
+    position: absolute; right: 22px; top: 14px; font-size: 42px; line-height: 1;
+    transform-origin: 85% 90%; animation: swing 2.2s ease-in-out infinite;
+  }
+
+  /* ---------- 奶了个奶：叠放的牌 ---------- */
+  .art-sheep { background: linear-gradient(160deg, #e8dcff, #ffd9ea); }
+  .tile {
+    position: absolute; width: 84px; height: 84px; border-radius: 16px;
+    display: grid; place-items: center;
+    box-shadow: inset 0 -7px 0 rgba(0, 0, 0, .13), 0 8px 14px rgba(90, 60, 120, .2);
+  }
+  .tile img { width: 66px; height: 66px; object-fit: contain; margin-top: -4px; }
+  .art-sheep .t1 { left: 46px;  top: 26px; background: #bfe3ff; transform: rotate(-9deg); }
+  .art-sheep .t2 { right: 44px; top: 34px; background: #c9f0cf; transform: rotate(8deg); }
+  .art-sheep .t3 { left: 50%; top: 58px; margin-left: -42px; background: #ffc9de; animation: bob 2.4s ease-in-out infinite; }
+  .art-sheep .t1::after, .art-sheep .t2::after { content: ""; position: absolute; inset: 0; border-radius: 16px; background: rgba(60, 40, 80, .18); }
+
+  /* ---------- 奶蛙消消乐：小棋盘 ---------- */
+  .art-match { background: linear-gradient(160deg, #d2f5e4, #d5ecff); }
+  .board { position: absolute; left: 50%; top: 50%; width: 228px; margin: -76px 0 0 -114px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .cell { aspect-ratio: 1; border-radius: 14px; display: grid; place-items: center; box-shadow: inset 0 -5px 0 rgba(0, 0, 0, .12); }
+  .cell img { width: 80%; height: 80%; object-fit: contain; }
+  .cell.hit { animation: pulse 1.4s ease-in-out infinite; outline: 3px solid #fff; }
+  .c1 { background: #ffc9de; } .c2 { background: #bfe3ff; } .c3 { background: #c9f0cf; }
+  .c4 { background: #e2d3ff; } .c5 { background: #ffdcae; } .c6 { background: #b9efe9; }
+
+  /* ---------- 奶蛙跳一跳：台子 + 起跳 ---------- */
+  .art-jump { background: linear-gradient(170deg, #d5f0ff, #fff0cf); }
+  .art-jump svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .art-jump .hero-jump { transform-box: fill-box; transform-origin: 50% 100%; animation: squash 1.8s ease-in-out infinite; }
+
+  /* ---------- 底部 ---------- */
+  footer { margin-top: 26px; text-align: center; font-size: 12.5px; line-height: 1.8; color: var(--ink-soft); }
+  footer a { color: inherit; }
+
+  /* ---------- 动画 ---------- */
+  @keyframes giggle { 0%, 100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(4deg) scale(1.04, .97); } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes swing { 0%, 55%, 100% { transform: rotate(0); } 70% { transform: rotate(-38deg); } 80% { transform: rotate(8deg); } }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  @keyframes squash { 0%, 100% { transform: scale(1, 1); } 45% { transform: scale(1.12, .84); } 60% { transform: scale(.94, 1.08); } }
+
+  @media (max-width: 520px) {
+    .hero { gap: 14px; }
+    .hero-mascot { width: 88px; height: 88px; }
+    .bubble { font-size: 12px; top: -28px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-mascot" aria-hidden="true">
+      <img src="assets/nai/nai10-laugh.webp" alt="">
+      <span class="bubble">哦齁齁齁～</span>
+    </div>
+    <div>
+      <h1>奶蛙小游戏</h1>
+      <p>大家都玩过的国民小游戏，全部换成了奶蛙皮肤。点开就能玩，手机和电脑都行。</p>
+    </div>
+  </header>
+
+  <main class="grid">
+
+    <a class="card" href="whack/index.html">
+      <div class="art art-whack" aria-hidden="true">
+        <div class="hole"></div>
+        <img class="mole" src="assets/nai/nai03-mouse.webp" alt="">
+        <div class="rim"></div>
+        <span class="hammer">🔨</span>
+      </div>
+      <div class="meta">
+        <h2>打奶蛙</h2>
+        <p class="orig">玩法同款：打地鼠</p>
+        <p class="desc">4×4 个洞，奶蛙一冒头就打。连击越高，它笑得越疯；别打到天使。</p>
+        <span class="go">开玩 →</span>
+      </div>
+    </a>
+
+    <a class="card" href="sheep/index.html">
+      <div class="art art-sheep" aria-hidden="true">
+        <div class="tile t1"><img src="assets/nai/nai04-rooster.webp" alt=""></div>
+        <div class="tile t2"><img src="assets/nai/nai06-horse.webp" alt=""></div>
+        <div class="tile t3"><img src="assets/nai/nai05-dog.webp" alt=""></div>
+      </div>
+      <div class="meta">
+        <h2>奶了个奶</h2>
+        <p class="orig">玩法同款：羊了个羊</p>
+        <p class="desc">层层叠放的奶蛙牌，凑齐 3 个相同的就消。槽满了就输，每一关都有解。</p>
+        <span class="go">开玩 →</span>
+      </div>
+    </a>
+
+    <a class="card" href="match3/index.html">
+      <div class="art art-match" aria-hidden="true">
+        <div class="board">
+          <div class="cell c1"><img src="assets/nai/nai03-mouse.webp" alt=""></div>
+          <div class="cell c3"><img src="assets/nai/nai05-dog.webp" alt=""></div>
+          <div class="cell c5"><img src="assets/nai/nai06-horse.webp" alt=""></div>
+          <div class="cell c2 hit"><img src="assets/nai/nai04-rooster.webp" alt=""></div>
+          <div class="cell c2 hit"><img src="assets/nai/nai04-rooster.webp" alt=""></div>
+          <div class="cell c2 hit"><img src="assets/nai/nai04-rooster.webp" alt=""></div>
+        </div>
+      </div>
+      <div class="meta">
+        <h2>奶蛙消消乐</h2>
+        <p class="orig">玩法同款：开心消消乐</p>
+        <p class="desc">交换相邻的奶蛙，3 个连成线就消。连消越多，全场笑得越大声。</p>
+        <span class="go">开玩 →</span>
+      </div>
+    </a>
+
+    <a class="card" href="jump/index.html">
+      <div class="art art-jump" aria-hidden="true">
+        <svg viewBox="0 0 280 176" preserveAspectRatio="xMidYMid slice">
+          <!-- 圆柱台子（左下） -->
+          <ellipse cx="70" cy="160" rx="46" ry="14" fill="#e0b178"/>
+          <rect x="24" y="122" width="92" height="38" fill="#e0b178"/>
+          <ellipse cx="70" cy="122" rx="46" ry="14" fill="#ffd9a3"/>
+          <!-- 方块台子（右上） -->
+          <polygon points="196,78 238,96 196,114 154,96" fill="#ffc9de"/>
+          <polygon points="154,96 196,114 196,146 154,128" fill="#e79ab8"/>
+          <polygon points="196,114 238,96 238,128 196,146" fill="#d4809f"/>
+          <!-- 起跳弧线 -->
+          <path d="M92 100 C 110 36, 158 36, 176 74" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round" opacity=".9"/>
+          <!-- 站在圆柱上的小团子：和台子画在同一个坐标系里，缩放时不会错位 -->
+          <image class="hero-jump" href="assets/nai/nai01-blob.webp" x="40" y="70" width="60" height="60"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <h2>奶蛙跳一跳</h2>
+        <p class="orig">玩法同款：微信跳一跳</p>
+        <p class="desc">按住蓄力，松手起跳。踩中心加倍；掉下去的时候，奶蛙还在笑。</p>
+        <span class="go">开玩 →</span>
+      </div>
+    </a>
+
+  </main>
+
+  <footer>
+    奶蛙是网络梗 · 本项目仅供学习娱乐<br>
+    外观灵感来自 <a href="https://yhsome.github.io/BigNaiWa/" target="_blank" rel="noopener">《合成大奶娃》</a>
+  </footer>
+</div>
+</body>
+</html>
