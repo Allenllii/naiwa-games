@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#fff9f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<meta name="description" content="奶蛙消消乐：三个同款连成线就消除，攒出条纹、炸弹和彩虹块，听全场奶蛙哦齁齁齁大笑。">
+<title>奶蛙消消乐 · 奶蛙小游戏</title>
+<link rel="icon" href="../favicon.ico">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="layout">
+
+    <!-- 舞台：棋盘画在 canvas 上，浮层/提示是普通 DOM -->
+    <main class="stage-wrap" id="stageWrap">
+      <div class="stage" id="stage">
+        <canvas id="cv" role="img" aria-label="奶蛙消消乐棋盘，8 行 8 列"></canvas>
+        <div class="loading" id="loading">奶蛙们正在赶来…<noscript><br>需要开启 JavaScript 才能玩哦</noscript></div>
+        <div class="toast" id="toast" aria-live="polite"></div>
+        <div class="overlay" id="overlay" aria-hidden="true">
+          <div class="ov-card" role="dialog" aria-labelledby="ovTitle">
+            <img class="ov-sprite" id="ovSprite" src="../assets/nai/nai10-laugh.webp" alt="" width="104" height="104" onerror="this.style.visibility='hidden'">
+            <h2 class="ov-title" id="ovTitle">过关！</h2>
+            <p class="ov-sub" id="ovSub"></p>
+            <div class="ov-nums">
+              <div><span class="lbl">本局得分</span><b id="ovScore">0</b></div>
+              <div><span class="lbl">最高分</span><b id="ovBest" class="gold">0</b></div>
+            </div>
+            <p class="ov-record" id="ovRecord">🎉 新纪录！</p>
+            <div class="ov-btns">
+              <button class="btn primary big" id="ovPrimary" type="button">再来一局</button>
+              <button class="btn ghost" id="ovSecondary" type="button">从第 1 关重来</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="side">
+      <aside class="panel">
+        <header class="head">
+          <img class="logo" src="../assets/nai/nai10-laugh.webp" alt="" width="46" height="46" onerror="this.style.display='none'">
+          <div class="titles">
+            <h1>奶蛙消消乐</h1>
+            <p class="sub">点选再点相邻的奶蛙，或直接拖过去，三个同款连成线就消！</p>
+          </div>
+        </header>
+
+        <section class="stats" aria-label="战况">
+          <div class="stat"><span class="lbl">分数</span><b id="score">0</b></div>
+          <div class="stat"><span class="lbl">最高分</span><b id="best" class="gold">0</b></div>
+          <div class="stat"><span class="lbl">关卡</span><b id="level">1</b></div>
+          <div class="stat" id="movesCard"><span class="lbl">步数</span><b id="moves">20</b></div>
+        </section>
+
+        <section class="goal" aria-label="本关目标">
+          <div class="goal-row"><span class="lbl">目标分</span><span class="goal-text" id="goalText">0 / 1500</span></div>
+          <div class="bar"><i id="goalBar"></i></div>
+        </section>
+
+        <section class="btns">
+          <button class="btn" id="btnSound" type="button" aria-label="音效开关" title="音效开关（M）">🔊 音效开</button>
+          <button class="btn primary" id="btnRestart" type="button" aria-label="重开" title="重开（R）">↻ <span class="t">重开</span></button>
+          <a class="btn" id="btnHome" href="../index.html" aria-label="回到合集" title="回到合集">🏠 <span class="t">合集</span></a>
+        </section>
+
+        <section class="legend" aria-label="特殊块说明">
+          <div class="lg-title">攒出特殊块</div>
+          <div class="lg-row"><canvas class="mini" id="miniStripe" width="40" height="40"></canvas><p><b>4 连</b> 条纹块<br><span>消掉一整行 / 一整列</span></p></div>
+          <div class="lg-row"><canvas class="mini" id="miniBomb" width="40" height="40"></canvas><p><b>L / T 形</b> 炸弹块<br><span>炸掉周围 3×3</span></p></div>
+          <div class="lg-row"><canvas class="mini" id="miniRainbow" width="40" height="40"></canvas><p><b>5 连</b> 彩虹块<br><span>与谁交换，就清掉全场谁</span></p></div>
+          <div class="lg-tip">特殊块之间互相交换，还有更猛的组合技。连消 4 次以上，全场奶蛙一起大笑！</div>
+        </section>
+      </aside>
+      <footer class="foot">奶蛙是网络梗 · 本项目仅供学习娱乐</footer>
+    </div>
+
+  </div>
+</div>
+
+<script src="../common/sfx.js"></script>
+<script src="logic.js"></script>
+<script src="render.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
