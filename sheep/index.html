@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#fff9f1">
+<title>奶了个奶 · 奶蛙小游戏</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- 左：游戏舞台 -->
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <canvas id="cv"></canvas>
+      <div class="hint" id="hint" aria-hidden="true">点亮的牌入槽，3 张同款消除，槽满就输</div>
+      <div class="powerbar" id="powerbar">
+        <button class="pw" data-pw="undo" aria-label="撤回" title="撤回：把最后放进槽的牌放回原位（快捷键 1）"><span class="ic">↩️</span><span class="tx">撤回</span></button>
+        <button class="pw" data-pw="moveOut" aria-label="移出" title="移出：槽里最前面 3 张移到暂存区（快捷键 2）"><span class="ic">📤</span><span class="tx">移出</span></button>
+        <button class="pw" data-pw="shuffle" aria-label="洗牌" title="洗牌：打乱场上牌的造型，位置不变（快捷键 3）"><span class="ic">🔀</span><span class="tx">洗牌</span></button>
+      </div>
+      <!-- 过关 / 失败浮层 -->
+      <div class="overlay" id="overlay" aria-live="polite">
+        <div class="ov-card">
+          <div class="ov-emoji" id="ovEmoji">🎉</div>
+          <h2 id="ovTitle">过关！</h2>
+          <p class="ov-sub" id="ovSub"></p>
+          <div class="ov-scores">
+            <div class="stat"><span class="lb">本局得分</span><span class="vl" id="ovScore">0</span></div>
+            <div class="stat best"><span class="lb">最高分</span><span class="vl" id="ovBest">0</span></div>
+          </div>
+          <p class="ov-new" id="ovNew">🎉 新纪录！</p>
+          <div class="ov-btns">
+            <button class="btn primary" id="ovMain" type="button">下一关</button>
+            <button class="btn" id="ovAlt" type="button">从第 1 关重来</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右：侧栏 -->
+  <aside class="panel">
+    <div class="head">
+      <h1>奶了个奶</h1>
+      <p class="sub">点牌入槽，凑齐 3 张同款自动消除；槽满 7 张就输啦！</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="lb">关卡</span><span class="vl" id="hudLevel">1</span></div>
+      <div class="stat"><span class="lb">剩余牌数</span><span class="vl" id="hudLeft">0</span></div>
+      <div class="stat"><span class="lb">分数</span><span class="vl" id="hudScore">0</span></div>
+      <div class="stat best"><span class="lb">最高分</span><span class="vl" id="hudBest">0</span></div>
+    </div>
+    <div class="btns">
+      <button class="btn" id="btnSound" type="button" aria-label="音效开关" title="音效开/关（M）">🔊<span class="tx"> 音效开</span></button>
+      <button class="btn primary" id="btnRestart" type="button" aria-label="重开" title="重开（R）">↻<span class="tx"> 重开</span></button>
+      <a class="btn" id="btnHome" href="../index.html" aria-label="返回合集" title="返回合集">🏠<span class="tx"> 合集</span></a>
+    </div>
+    <ol class="tips">
+      <li>只能点<b>没被压住</b>的牌（压住的会变暗）</li>
+      <li>同款牌在槽里自动挨着排，<b>凑齐 3 张就消除</b></li>
+      <li>三个道具每关各用 1 次：<b>撤回 / 移出 / 洗牌</b>（键盘 1 2 3）</li>
+    </ol>
+    <p class="foot">奶蛙是网络梗 · 本项目仅供学习娱乐</p>
+  </aside>
+  <p class="foot-m">奶蛙是网络梗 · 本项目仅供学习娱乐</p>
+</div>
+
+<script src="../common/sfx.js"></script>
+<script src="logic.js"></script>
+<script src="engine.js"></script>
+<script src="fx.js"></script>
+<script src="view.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
