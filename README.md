@@ -18,6 +18,13 @@
 - 奶蛙真实笑声 + Web Audio 现场合成的音效；最高分保存在本机浏览器（localStorage），没有后端
 - 核心规则与界面分离，每个游戏都带 Node 逻辑测试，例如 `node whack/test-logic.js`
 
+## 声音说明
+
+- 笑声每次都播同一整段「啊哈哈哈哈哈哈」（约 1 秒），连击时会叠在一起；其余音效现场合成。
+- iPhone 上网页声音默认受侧面静音键控制，静音键打开时没有声音，和原生游戏一样。
+- 微信内置浏览器对网页声音限制更严：程序会自动改用备用方式播放，仍没声音时会提示「在浏览器打开」。
+- 手机没声音时，在网址后面加 `?audiodebug=1`，左上角会显示声音状态，点一下会试播一声笑，方便排查。
+
 ## 本地运行
 
 双击根目录的 `index.html`；或者在项目根目录运行 `python -m http.server 8000`，再打开 http://localhost:8000/
@@ -27,7 +34,8 @@
 ```
 index.html        合集入口页
 assets/nai/       奶蛙图片素材（11 张透明底 WebP）
-common/           共用音效模块（sfx.js）和笑声录音数据（laugh-data.js）
+assets/audio/     奶蛙完整笑声原声（laugh-full.mp3，约 10 秒，备用）
+common/           共用音效模块（sfx.js）和笑声录音数据（laugh-data.js，游戏实际播放的那一段）
 whack/ sheep/ match3/ jump/   四个游戏，各自带 test-logic.js
 ```
 
