@@ -6,8 +6,11 @@
  *
  *  用法：
  *    <script src="../common/sfx.js"></script>
- *    在第一次用户操作（pointerdown / keydown）里调一次 NaiSFX.init()。
+ *    声音解锁由本模块自己负责：它会监听 pointerdown / pointerup / touchend / click / keydown 等手势，
+ *    直到声音真正跑起来为止（手机浏览器只认部分手势）；游戏里额外调 NaiSFX.init() 也行，是幂等的。
  *    之后随时调 NaiSFX.laugh(level) 等；静音 / 浏览器不支持时都是空操作，不会报错。
+ *    手机没声音时：网址后面加 ?audiodebug=1，左上角会显示声音状态，点一下还会试播一声笑。
+ *    注意：iPhone 上网页声音默认受侧面静音键控制（和原生游戏一样），静音键打开时是没有声音的。
  *
  *  API：
  *    init()                     初始化 / 恢复音频（需在用户手势里调）
@@ -39,6 +42,14 @@
   var MIN_LAUGH_GAP = 0.1; // 两次笑声最短间隔（秒），避免连击时叠成一团噪音
   var MAX_LAUGH_VOICES = 3;// 真实笑声最多同时播几个，超过就把最老的快速淡出
   var lastLaughAt = -1;
+
+  // 手机浏览器的「声音解锁」：
+  //   手机只认某几种用户手势才允许出声（iOS Safari：touchend / click；Chrome 触屏：pointerup / touchend / click；
+  //   触摸时的 pointerdown / touchstart 不算），电脑上鼠标按下就算。所以这里在所有可能的手势上都试一次，
+  //   直到声音真的跑起来（state === 'running'）为止；之后若被系统打断（来电、切后台）再重新挂上。
+  var unlockEvents = ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'click', 'keydown'];
+  var listening = false;
+  var lastUnlockVia = '';  // 诊断用：最近一次是哪个事件触发了解锁
 
   // 真实笑声
   var laughData = root.NAI_LAUGH || null;  // { mime, b64 }，由 laugh-data.js 提供
@@ -139,8 +150,10 @@
         master.connect(comp);
         comp.connect(ctx.destination);
         noiseBuf = makeNoise(ctx);
+        // 被系统打断（来电 / 切后台 / 锁屏）后，下一次手势要能重新解锁
+        if (ctx.addEventListener) ctx.addEventListener('statechange', function () { if (ctx.state !== 'running') attachUnlock(); });
       }
-      if (ctx.state === 'suspended') {
+      if (ctx.state === 'suspended' || ctx.state === 'interrupted') {   // interrupted 是 iOS 特有的状态
         var p = ctx.resume();
         if (p && p.catch) p.catch(function () {});
       }
@@ -149,6 +162,61 @@
     } catch (e) {
       return false;
     }
+  }
+
+  function unlock(ev) {
+    if (!AC) return;
+    lastUnlockVia = (ev && ev.type) || 'call';
+    if (!init() || !ctx) return;               // init 里会 resume —— 必须在手势事件的同一个调用栈里
+    try {                                      // iOS：先放一小段静音数据，把音频通道真正“点亮”
+      var s = ctx.createBufferSource();
+      s.buffer = ctx.createBuffer(1, 1, 22050);
+      s.connect(ctx.destination);
+      s.start(0);
+    } catch (e) {}
+    if (ctx.state === 'running') { detachUnlock(); return; }
+    var p = ctx.resume && ctx.resume();
+    if (p && p.then) p.then(function () { if (ctx.state === 'running') detachUnlock(); }, function () {});
+  }
+
+  function attachUnlock() {
+    if (listening || !AC) return;
+    listening = true;
+    unlockEvents.forEach(function (t) { root.addEventListener(t, unlock, { capture: true, passive: true }); });
+  }
+
+  function detachUnlock() {
+    if (!listening) return;
+    listening = false;
+    unlockEvents.forEach(function (t) { root.removeEventListener(t, unlock, true); });
+  }
+
+  // 声音诊断面板：网址后面加 ?audiodebug=1 就会在左上角显示声音状态，点它会试播一声笑。
+  // 手机上没声音时，打开这个网址、截图给开发者，就能判断是「没解锁」还是「被静音键/音量挡住了」。
+  function audioDebug() {
+    if (!/[?&]audiodebug=1/.test((root.location && root.location.search) || '')) return;
+    var el = document.createElement('div');
+    el.style.cssText = 'position:fixed;left:6px;top:6px;z-index:2147483647;max-width:92vw;padding:8px 10px;border-radius:10px;' +
+      'background:rgba(0,0,0,.82);color:#fff;font:12px/1.6 monospace;white-space:pre-wrap;word-break:break-all';
+    function mount() { (document.body || document.documentElement).appendChild(el); }
+    if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
+    function render() {
+      var as = root.navigator && root.navigator.audioSession;
+      el.textContent = ['声音诊断（点我试播一声笑）',
+        'AudioContext: ' + (AC ? '支持' : '不支持'),
+        '状态: ' + (ctx ? ctx.state : '还没创建（还没点过屏幕）'),
+        '静音按钮: ' + (muted ? '已静音' : '开'),
+        '真实笑声: ' + (laughBuf ? '已就绪 ' + laughBuf.duration.toFixed(1) + '秒'
+          : !laughData ? '数据未加载'
+          : !ctx ? '数据已加载，等第一次点屏幕后解码'
+          : '解码中或失败'),
+        'audioSession: ' + (as ? as.type : '不支持'),
+        '最近解锁事件: ' + (lastUnlockVia || '无'),
+        'UA: ' + String((root.navigator && root.navigator.userAgent) || '').slice(0, 90)].join('\n');
+    }
+    el.addEventListener('click', function () { unlock({ type: 'debug-tap' }); setTimeout(function () { root.NaiSFX.laugh(0.8); }, 200); });
+    setInterval(render, 500);
+    render();
   }
 
   function setMuted(b) {
@@ -369,6 +437,8 @@
       else play(bLaugh, level);                                // 真实录音还没就绪：先用合成笑声顶着
     },
     laughReady: function () { return !!laughBuf; },
+    unlock: unlock,                                             // 手动触发一次解锁（一般不用：本模块会自己监听手势）
+    state: function () { return ctx ? ctx.state : 'none'; },    // AudioContext 状态：none / suspended / running / interrupted
     pop:   function () { play(bPop); },
     click: function () { play(bClick); },
     good:  function (n) { play(bGood, n); },
@@ -399,4 +469,10 @@
   };
 
   loadLaughScript();
+  attachUnlock();                                   // 页面一加载就开始监听手势，第一次点屏幕就把声音解锁
+  document.addEventListener('visibilitychange', function () {   // 切回前台时，若声音被系统暂停了，下一次手势再解锁
+    if (!document.hidden && ctx && ctx.state !== 'running') attachUnlock();
+  });
+  document.addEventListener('WeixinJSBridgeReady', attachUnlock, false);   // 微信内置浏览器
+  audioDebug();
 })(window);
